@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/15 15:19:35 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/15 15:07:08 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int		ft_second_fork (char *argv[], char *envp[], int pipefd[], int id1)
 		perror("Error in the second fork");
 		exit(1);
 	}	
-	if (id2 == 0)
+	if (id2 == 0) // child 2
 	{
 		ft_second_child(argv, envp, pipefd);
 	}
@@ -87,7 +87,7 @@ void		ft_first_child (char *argv[], char *envp[], int pipefd[])
 		}
 		close(pipefd[1]);
 		char *args[] = {"/bin/sh", "-c", argv[2], NULL};
-		execve("/bin/sh", args, envp);
+		execve("/bin/sh", args, envp); //child exits here anyways
 }
 
 int		ft_first_fork (char *argv[], char *envp[], int pipefd[]) // for bonus, receive int cmds for number of commands (argc -3)
@@ -100,7 +100,9 @@ int		ft_first_fork (char *argv[], char *envp[], int pipefd[]) // for bonus, rece
 		perror("Error in the first fork");
 		exit(1);
 	}
-	if (id1 == 0)
+	// BONUS: create while loop WHILE there are commands to run
+	//	int		pipefd2[2];
+	if (id1 == 0) // child 1
 	{
 		ft_first_child(argv, envp, pipefd);
 	}

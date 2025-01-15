@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/14 15:30:42 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/15 13:55:14 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int		main (int argc, char *argv[], char *envp[])
 		ft_putstr_fd("Too few arguments.", 1);
 		exit(1);
 	}
-		return 0;
 	if (pipe(pipefd1) == -1)
 	{
 		perror("Error opening pipe");
@@ -64,6 +63,8 @@ int		main (int argc, char *argv[], char *envp[])
 	// BONUS: create while loop WHILE there are commands to run
 	//	int		pipefd2[2];
 	int		id2;
+	int		exitstatus2;
+	
 	id2 = fork();
 	if (id2 == -1)
 	{
@@ -75,7 +76,7 @@ int		main (int argc, char *argv[], char *envp[])
 		int		outfile;
 
 		close(pipefd1[1]);
-		outfile = open(argv[4], O_WRONLY);
+		outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (outfile == -1)
 		{
 			perror("Error opening outfile");
@@ -99,7 +100,9 @@ int		main (int argc, char *argv[], char *envp[])
 	close(pipefd1[0]);
 	close(pipefd1[1]);
 	waitpid(id1, NULL, 0);
-	waitpid(id2, NULL, 0);
+	waitpid(id2, &exitstatus2, 0);
+	if (WIFEXITED(exitstatus2) && WEXITSTATUS(exitstatus2) != 0) 
+    	return WEXITSTATUS(exitstatus2);
 	return 0;
 }
 /* int		main (int argc, char *argv[], char *envp[])

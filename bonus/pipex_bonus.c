@@ -1,16 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/16 14:19:19 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/16 14:10:04 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
+
+/* int		ft_array_size(char *arr[])
+{
+	int		i;
+
+	i = 0;
+	while (arr[i])
+		i++;
+	return(i);
+} */
 
 void	ft_execute(char *cmd, char *envp[])
 {
@@ -23,7 +33,7 @@ void	ft_execute(char *cmd, char *envp[])
 	execve("/bin/sh", args, envp);
 }
 
-int	ft_second_fork(char *argv[], char *envp[], int pipefd[])
+int	ft_second_fork(char *argv[], char *envp[], int pipefd[])//, int commands)
 {
 	int		id2;
 	int		exitstatus2;
@@ -36,7 +46,13 @@ int	ft_second_fork(char *argv[], char *envp[], int pipefd[])
 	}
 	if (id2 == 0)
 	{
-		ft_last_child(argv, envp, pipefd);
+		//int		argc;
+
+		//argc = ft_array_size(argv);
+		//if (commands == argc - 4)
+			ft_last_child(argv, envp, pipefd);
+		//else
+			//!!!!!!!!!!!!!!!!!!!!
 	}
 	close(pipefd[0]);
 	close(pipefd[1]);
@@ -64,6 +80,10 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	commands = 0;
 	ft_first_fork(argv, envp, pipefd);
-	estatus = ft_second_fork(argv, envp, pipefd);
+//	while (commands < argc - 3)
+//	{
+		estatus = ft_second_fork(argv, envp, pipefd);//, commands);
+//		commands++;
+//	}
 	return (estatus);
 }

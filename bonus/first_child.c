@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/16 14:08:15 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/17 16:25:14 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 void	ft_first_child(char *argv[], char *envp[], int pipefd[])
 {
 	int		infile;
+//if heredoc, exectd++ -
 
 	close(pipefd[0]);
 	infile = open(argv[1], O_RDONLY);
@@ -53,6 +54,5 @@ void	ft_first_fork(char *argv[], char *envp[], int pipefd[])
 	{
 		ft_first_child(argv, envp, pipefd);
 	}
-	waitpid(id1, NULL, 0);
 	return ;
 }

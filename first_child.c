@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/16 14:15:07 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/23 13:42:31 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,37 +21,20 @@ void	ft_first_child(char *argv[], char *envp[], int pipefd[])
 	if (infile == -1)
 	{
 		perror("Error opening infile");
-		exit(1);
+		exit(errno);
 	}
 	if (dup2(infile, STDIN_FILENO) < 0)
 	{
 		perror("Error duplicating infile");
-		exit(1);
+		exit(errno);
 	}
 	close(infile);
 	if (dup2(pipefd[1], STDOUT_FILENO) < 0)
 	{
 		perror("Error duplicating writing end of pipe");
-		exit(1);
+		exit(errno);
 	}
 	close(pipefd[1]);
 	ft_execute(argv[2], envp);
 }
 
-void	ft_first_fork(char *argv[], char *envp[], int pipefd[])
-{
-	int		id1;
-
-	id1 = fork();
-	if (id1 == -1)
-	{
-		perror("Error in the first fork");
-		exit(1);
-	}
-	if (id1 == 0)
-	{
-		ft_first_child(argv, envp, pipefd);
-	}
-	waitpid(id1, NULL, 0);
-	return ;
-}

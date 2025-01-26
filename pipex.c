@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/16 14:19:19 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/23 14:57:06 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,34 +23,38 @@ void	ft_execute(char *cmd, char *envp[])
 	execve("/bin/sh", args, envp);
 }
 
-int	ft_second_fork(char *argv[], char *envp[], int pipefd[])
+int	ft_fork(char *argv[], char *envp[], int pipefd[])
 {
-	int		id2;
-	int		exitstatus2;
+	int		id1;
+	int		id_last;
+	int		estatus;
 
-	id2 = fork();
-	if (id2 == -1)
+	id1 = fork();
+	id_last = -2;
+	if (id1 != 0)
+		id_last = fork();
+	if (id1 == -1 || id_last == -1)
 	{
-		perror("Error in the second fork");
-		exit(1);
+		perror("Error in the fork");
+		exit(errno);
 	}
-	if (id2 == 0)
-	{
+	if (id1 == 0)
+		ft_first_child(argv, envp, pipefd);
+	if (id_last == 0)
 		ft_last_child(argv, envp, pipefd);
-	}
 	close(pipefd[0]);
 	close(pipefd[1]);
-	waitpid(id2, &exitstatus2, 0);
-	if (WIFEXITED(exitstatus2) && WEXITSTATUS(exitstatus2) != 0)
-		return (WEXITSTATUS(exitstatus2));
-	return (0);
+	waitpid(id1, NULL, 0);
+	waitpid(id_last, &estatus, 0);
+	if (WIFEXITED(estatus))
+		return (WEXITSTATUS(estatus));
+	return (1);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
 	int		pipefd[2];
 	int		estatus;
-	int		commands;
 
 	if (argc < 5)
 	{
@@ -60,10 +64,8 @@ int	main(int argc, char *argv[], char *envp[])
 	if (pipe(pipefd) == -1)
 	{
 		perror("Error opening pipe");
-		exit(1);
+		exit(errno);
 	}
-	commands = 0;
-	ft_first_fork(argv, envp, pipefd);
-	estatus = ft_second_fork(argv, envp, pipefd);
+	estatus = ft_fork(argv, envp, pipefd);
 	return (estatus);
-}
+	}

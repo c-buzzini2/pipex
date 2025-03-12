@@ -6,21 +6,11 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/17 17:42:22 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/12 15:49:51 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-
-/*int		ft_array_size(char *arr[])
-{
-	int		i;
-
-	i = 0;
-	while (arr[i])
-		i++;
-	return(i);
-} */
 
 void	ft_execute(char *cmd, char *envp[])
 {
@@ -33,94 +23,74 @@ void	ft_execute(char *cmd, char *envp[])
 	execve("/bin/sh", args, envp);
 }
 
-void	ft_create_pipe(int *pipes[], int i)
+void ft_which_child(t_pipex *pipex, int **pipefd, int forks)
 {
-	if (pipe(pipes[i]) == -1)
-	{
- 		perror("Error creating pipe");
-             while (i-- >= 0)
-                free(pipes[i]);
-            free(pipes);
-            exit (1);
-    }
+	if (forks == 0)
+		ft_first_child(pipex, pipefd[0]);
+	else if (forks == pipex->cmd_count - 1)
+		ft_last_child(pipex, pipefd[pipex->cmd_count - 2]);
+	else
+		ft_middle_child(pipex, pipefd[forks], pipefd[forks + 1]);
+
 }
 
-int	**ft_allocate_pipes(int total_pipes)
+int	ft_fork(t_pipex *pipex, int **pipefd)
 {
-	int		**pipes;
-	int		i;
+	int		id;
+	int		estatus;
+	int		forks;
 
-	pipes = malloc (1 * sizeof(int *) * total_pipes);
-	if (!pipes)
+	forks = 0;
+	id = -2;
+	while (forks < pipex->cmd_count)
 	{
-		ft_putstr_fd("Error allocating pipes.", 1);
-		exit (1);
-	}
-	i = 0;
-	while (i < total_pipes)
-	{
-		pipes[i] = malloc(sizeof(int) * 2);
-        if (!pipes[i])
-        {
-            while (--i >= 0)
-                free(pipes[i]);
-            free(pipes);
-			ft_putstr_fd("Error allocating pipe %i.", 1);
-            exit (1);
+		if (id != 0)
+		{
+			id = fork();
+			if (id == -1)
+			{
+				perror("Error in the fork");
+				exit(errno);
+			}
 		}
-		ft_create_pipe(pipes, i);
-		i++;
+		if (id == 0)
+			ft_which_child(pipex, pipefd, forks);
+		forks++;
 	}
-	return (pipes);
+	close(pipefd[0]);
+	close(pipefd[1]);
+	waitpid(id1, NULL, 0);
+	waitpid(id_last, &estatus, 0);
+	if (WIFEXITED(estatus))
+		return (WEXITSTATUS(estatus));
+	return (1);
 }
 
-void	ft_close_and_free(int *pipes[], int total_pipes)
-{
-	int		i;
-
-	i = 0;
-	while (i < total_pipes)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		free(pipes[i]);
-		i++;
-	}
-	free(pipes);
-}
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	int		estatus;
-	int		total_cmds;
-	int		exctd_cmds;
-	int		**pipes;
-	int		pid;
+	int				**pipefd;
+	int				estatus;
+	static t_pipex	pipex;
 
-	printf("Hello");
 	if (argc < 5)
 	{
 		ft_putstr_fd("Not enough arguments.", 1);
 		exit(1);
 	}
-	total_cmds = argc - 3; // if heredoc, --
-	pipes = ft_allocate_pipes(total_cmds - 1);
-	ft_first_fork(argv, envp, pipes[0]);
-	exctd_cmds = 1;
-	while (exctd_cmds < argc - 3)
+	pipex.argc = argc;
+	pipex.cmd_count = argc - 3; // needs if statement for heredoc (-5)
+	pipex.cmds = argv + 2; //also inside if statement heredoc
+	pipex.envp = envp;
+	pipex.infile = argv[1];
+	pipex.outfile = argv[argc - 1];
+	pipefd = ft_create_arr_pipes(&pipex);
+	int i = 0;
+	while (i < (pipex.cmd_count - 1))
 	{
-		if (exctd_cmds == total_cmds - 1)
-		{
-			ft_last_fork(argv, envp, pipes, exctd_cmds);
-			exctd_cmds++;
-		}
-		else
-		{
-			ft_middle_fork(argv, envp, pipes, exctd_cmds);
-			exctd_cmds++;
-		}
+		printf("%d\n", pipefd[i][0]);
+		i++;
 	}
-	while ((pid = wait(&estatus)) > 0);
-	ft_close_and_free(pipes, total_cmds - 1); // !!!!!START HERE, NEED TO CLOSE ALL PIPES ENDS AT THE PARENT;Side
+	estatus = ft_fork(&pipex, pipefd);
 	return (estatus);
-}
+	}

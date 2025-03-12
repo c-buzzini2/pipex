@@ -1,21 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/23 14:22:21 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/12 11:03:56 by cbuzzini         ###   ########.fr       */
+/*   Created: 2024/11/10 11:34:44 by cbuzzini          #+#    #+#             */
+/*   Updated: 2025/03/12 14:41:50 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-void	ft_putchar_fd(char c, int fd)
+t_child	*ft_lstnew(int index, char *cmd)
 {
-	if (!fd)
-		return ;
-	if (write(fd, &c, 1) == -1)
-		exit(errno);
+	t_child	*new_node;
+
+	new_node = malloc(1 * sizeof (t_child));
+	if (new_node == NULL)
+		return (NULL);
+	new_node->index = index;
+	new_node->cmd = cmd;
+	new_node->next = NULL;
+	return (new_node);
 }

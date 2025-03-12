@@ -6,12 +6,12 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:33:53 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/12 15:21:53 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/01/17 16:25:55 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include <unistd.h>
 # include <stdio.h>
@@ -20,31 +20,18 @@
 # include <stdlib.h>
 #include <sys/wait.h>
 
-typedef struct s_pipex
-{
-	int		argc;
-	char    **cmds;
-	char	**envp;
-    int     cmd_count;
-    char    *infile;
-    char    *outfile;
-}	t_pipex;
-
-typedef struct s_child
-{
-	int		index;
-	char    *cmd;
-    int     pid;
-	t_child *next;
-}	t_child;
-
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putchar_fd(char c, int fd);
-void	ft_first_child(t_pipex *pipex, int pipefd[]);
-void	ft_last_child(t_pipex *pipex, int pipefd[]);
+void	ft_first_child(char *argv[], char *envp[], int pipefd[]);
+void	ft_first_fork(char *argv[], char *envp[], int pipefd[]);
+void	ft_last_child(char *argv[], char *envp[], int pipefd[], int exctd_cmds);
+int	    ft_last_fork(char *argv[], char *envp[], int *pipes[], int exctd_cmds);
+void	ft_middle_children(char *argv[], char *envp[], int *pipes[], int exctd_cmds);
+int	    ft_middle_fork(char *argv[], char *envp[], int *pipes[], int exctd_cmds);
 void	ft_execute(char *cmd, char *envp[]);
-int	    ft_fork(t_pipex *pipex, int **pipefd);
-void	ft_deallocate_pipes(int **pipefd, int i);
+void	ft_create_pipe(int *pipes[], int i);
+int	    **ft_allocate_pipes(int total_pipes);
+void	ft_close_and_free(int *pipes[], int total_pipes);
 
 
 #endif

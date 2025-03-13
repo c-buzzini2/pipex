@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/12 15:49:51 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/13 14:04:39 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,11 @@ void	ft_execute(char *cmd, char *envp[])
 void ft_which_child(t_pipex *pipex, int **pipefd, int forks)
 {
 	if (forks == 0)
-		ft_first_child(pipex, pipefd[0]);
+		ft_first_child(pipex, pipefd[0], pipefd);
 	else if (forks == pipex->cmd_count - 1)
-		ft_last_child(pipex, pipefd[pipex->cmd_count - 2]);
+		ft_last_child(pipex, pipefd[pipex->cmd_count - 2], pipefd);
 	else
-		ft_middle_child(pipex, pipefd[forks], pipefd[forks + 1]);
-
+		ft_middle_child(pipex, pipefd[forks - 1], pipefd[forks], forks, pipefd); //Make sure that these indices are ok
 }
 
 int	ft_fork(t_pipex *pipex, int **pipefd)
@@ -41,29 +40,38 @@ int	ft_fork(t_pipex *pipex, int **pipefd)
 	int		forks;
 
 	forks = 0;
-	id = -2;
 	while (forks < pipex->cmd_count)
 	{
-		if (id != 0)
+		id = fork();
+		if (id == -1)
 		{
-			id = fork();
-			if (id == -1)
-			{
-				perror("Error in the fork");
-				exit(errno);
-			}
+			perror("Error in the fork");
+			exit(errno);
 		}
 		if (id == 0)
 			ft_which_child(pipex, pipefd, forks);
 		forks++;
 	}
-	close(pipefd[0]);
-	close(pipefd[1]);
-	waitpid(id1, NULL, 0);
-	waitpid(id_last, &estatus, 0);
-	if (WIFEXITED(estatus))
-		return (WEXITSTATUS(estatus));
-	return (1);
+	int i = 0;
+	while (i < (pipex->cmd_count - 1))
+	{
+		close(pipefd[i][0]);
+		close(pipefd[i][1]);
+		i++;
+	}
+//	close(pipefd[0]); CLOSE ALL PIPES IN A LOOP (BOTH ENDS)
+//	close(pipefd[1]);
+	pid_t child_pid;
+    while ((child_pid = waitpid(-1, &estatus, 0)) > 0) 
+	{
+        if (WIFEXITED(estatus))
+            printf("Child PID %d exited with status %d\n", child_pid, WEXITSTATUS(estatus));
+		else 
+		    printf("Child PID %d terminated abnormally\n", child_pid);
+    }
+	ft_deallocate_pipes(pipefd, pipex->cmd_count - 1);
+    printf("All children have finished.\n");
+    return 0;
 }
 
 
@@ -92,5 +100,6 @@ int	main(int argc, char *argv[], char *envp[])
 		i++;
 	}
 	estatus = ft_fork(&pipex, pipefd);
+	//ft_deallocate_pipes(pipefd, pipex.cmd_count - 1);
 	return (estatus);
 	}

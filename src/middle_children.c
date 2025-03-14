@@ -6,15 +6,13 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/14 13:30:33 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/14 14:50:31 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-//TOO MANY LINES
 
-void	ft_middle_child(t_pipex *pipex, int prev_pipe[], int next_pipe[],
-					int forks)
+void	ft_close_pipes_middle(t_pipex *pipex, int prev_pipe[], int next_pipe[])
 {
 	int		i;
 
@@ -27,6 +25,12 @@ void	ft_middle_child(t_pipex *pipex, int prev_pipe[], int next_pipe[],
 			close(pipex->fd[i][0]);
 		i++;
 	}
+}
+
+void	ft_middle_child(t_pipex *pipex, int prev_pipe[], int next_pipe[],
+					int forks)
+{
+	ft_close_pipes_middle(pipex, prev_pipe, next_pipe);
 	if (dup2(prev_pipe[0], STDIN_FILENO) < 0)
 	{
 		perror("Error duplicating reading end of pipe");

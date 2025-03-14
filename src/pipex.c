@@ -6,22 +6,11 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/14 13:34:46 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/14 15:20:30 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	ft_execute(char *cmd, char *envp[])
-{
-	char	*args[4];
-
-	args[0] = "/bin/sh";
-	args[1] = "-c";
-	args[2] = cmd;
-	args[3] = NULL;
-	execve("/bin/sh", args, envp);
-}
 
 void	ft_which_child(t_pipex *pipex, int forks)
 {

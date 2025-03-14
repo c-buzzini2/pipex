@@ -6,12 +6,25 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/14 13:28:39 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/14 13:45:28 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 #include "pipex.h"
+
+void	ft_first_child2(t_pipex *pipex)
+{
+	if (dup2(pipex->fd[0][1], STDOUT_FILENO) < 0)
+	{
+		perror("Error duplicating writing end of pipe");
+		ft_deallocate_pipes(pipex->fd);
+		exit(errno);
+	}
+	close(pipex->fd[0][1]);
+	ft_deallocate_pipes(pipex->fd);
+	ft_execute(pipex->cmds[0], pipex->envp);
+}
 
 void	ft_first_child(t_pipex *pipex) //TOO MANY LINES
 {
@@ -40,13 +53,6 @@ void	ft_first_child(t_pipex *pipex) //TOO MANY LINES
 		exit(errno);
 	}
 	close(infile);
-	if (dup2(pipex->fd[0][1], STDOUT_FILENO) < 0)
-	{
-		perror("Error duplicating writing end of pipe");
-		ft_deallocate_pipes(pipex->fd);
-		exit(errno);
-	}
-	close(pipex->fd[0][1]);
-	ft_deallocate_pipes(pipex->fd);
-	ft_execute(pipex->cmds[0], pipex->envp);
+	ft_first_child2(pipex);
 }
+

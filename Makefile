@@ -6,17 +6,34 @@
 #    By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 12:59:11 by cbuzzini          #+#    #+#              #
-#    Updated: 2025/01/16 14:20:35 by cbuzzini         ###   ########.fr        #
+#    Updated: 2025/03/14 13:05:49 by cbuzzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-HDR_FILES = pipex.h
-SRC_FILES = pipex.c ft_putstr_fd.c ft_putchar_fd.c first_child.c last_child.c
-OBJ_FILES = $(SRC_FILES:.c=.o)
 
-HDR_BONUS = pipex_bonus.h
-BONUS_FILES = pipex_bonus.c ft_putstr_fd.c ft_putchar_fd.c
-OBJ_BONUS = $(BONUS_FILES:.c=.o)
+SRC_DIR = src/
+OBJ_DIR = obj/
+INCLUDE_DIR = includes/
+
+INCLUDES = pipex.h includes/pipex_bonus.h
+HDR_FILES = $(addprefix $(INCLUDE_DIR), $(INCLUDES))
+
+SRC_FILES = pipex.c \
+			ft_putstr_fd.c \
+			first_child.c \
+			last_child.c \
+			pipefd.c
+SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
+OBJ_FILES = $(addprefix $(OBJ_DIR), $(SRC_FILES:.c=.o))
+
+BONUS_FILES = pipex_bonus.c \
+			ft_putstr_fd.c \
+			first_child.c \
+			last_child.c \
+			pipefd.c \
+			middle_children.c
+BONUS = $(addprefix $(SRC_DIR), $(BONUS_FILES))
+OBJ_BONUS = $(addprefix $(OBJ_DIR), $(BONUS_FILES:.c=.o))
 
 CC = cc 
 FLAGS = -g -Wall -Wextra -Werror
@@ -24,17 +41,20 @@ NAME = pipex
 
 all: $(NAME)
 
-%.o: %.c $(HDR_FILES) #does the dependency stay? do I need something parallel to this just for the bonus???
-	$(CC) $(FLAGS) -c $< -o $@ 
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJ_DIR)
+	$(CC) $(FLAGS) -Iincludes -c $< -o $@ 
 
 $(NAME): $(OBJ_FILES)
 	$(CC) $(FLAGS) $(OBJ_FILES) -o $(NAME)
 
-#bonus: $(OBJ_BONUS) $(HDR_BONUS) # BONUS IS RELINKING
-#	$(CC) $(FLAGS) $(OBJ_BONUS) -I $(HDR_BONUS) -o $(NAME)
+bonus: $(OBJ_BONUS)
+	$(CC) $(FLAGS) $(OBJ_BONUS) -o $(NAME)
 
 clean:
-	rm -f $(OBJ_FILES) $(OBJ_BONUS)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(NAME)

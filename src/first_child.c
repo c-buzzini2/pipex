@@ -6,53 +6,47 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/01/17 16:25:14 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/14 13:28:39 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include "pipex.h"
 #include "pipex_bonus.h"
+#include "pipex.h"
 
-void	ft_first_child(char *argv[], char *envp[], int pipefd[])
+void	ft_first_child(t_pipex *pipex) //TOO MANY LINES
 {
 	int		infile;
-//if heredoc, exectd++ -
+	int		i;
 
-	close(pipefd[0]);
-	infile = open(argv[1], O_RDONLY);
+	i = 0;
+	while (i < (pipex->cmd_count - 1))
+	{
+		close(pipex->fd[i][0]);
+		if (i != 0)
+			close(pipex->fd[i][1]);
+		i++;
+	}
+	infile = open(pipex->infile, O_RDONLY);
 	if (infile == -1)
 	{
 		perror("Error opening infile");
-		exit(1);
+		ft_deallocate_pipes(pipex->fd);
+		exit(errno);
 	}
 	if (dup2(infile, STDIN_FILENO) < 0)
 	{
 		perror("Error duplicating infile");
-		exit(1);
+		ft_deallocate_pipes(pipex->fd);
+		exit(errno);
 	}
 	close(infile);
-	if (dup2(pipefd[1], STDOUT_FILENO) < 0)
+	if (dup2(pipex->fd[0][1], STDOUT_FILENO) < 0)
 	{
 		perror("Error duplicating writing end of pipe");
-		exit(1);
+		ft_deallocate_pipes(pipex->fd);
+		exit(errno);
 	}
-	close(pipefd[1]);
-	ft_execute(argv[2], envp);
-}
-
-void	ft_first_fork(char *argv[], char *envp[], int pipefd[])
-{
-	int		id1;
-
-	id1 = fork();
-	if (id1 == -1)
-	{
-		perror("Error in the first fork");
-		exit(1);
-	}
-	if (id1 == 0)
-	{
-		ft_first_child(argv, envp, pipefd);
-	}
-	return ;
+	close(pipex->fd[0][1]);
+	ft_deallocate_pipes(pipex->fd);
+	ft_execute(pipex->cmds[0], pipex->envp);
 }

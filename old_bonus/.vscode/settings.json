@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "pipex_bonus.h": "c",
-        "stdio.h": "c",
-        "wait.h": "c",
-        "unistd.h": "c",
-        "stdlib.h": "c"
-    }
-}

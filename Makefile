@@ -6,7 +6,7 @@
 #    By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/24 12:59:11 by cbuzzini          #+#    #+#              #
-#    Updated: 2025/03/14 15:25:11 by cbuzzini         ###   ########.fr        #
+#    Updated: 2025/03/15 13:44:05 by cbuzzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,11 @@ BONUS_FILES = pipex_bonus.c \
 			last_child.c \
 			pipefd.c \
 			execute.c \
-			middle_children.c
+			middle_children.c \
+			heredoc.c \
+			get_next_line/get_next_line.c \
+			get_next_line/get_next_line_utils.c
+
 BONUS = $(addprefix $(SRC_DIR), $(BONUS_FILES))
 OBJ_BONUS = $(addprefix $(OBJ_DIR), $(BONUS_FILES:.c=.o))
 

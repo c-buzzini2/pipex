@@ -6,12 +6,15 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/15 13:45:23 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:25:35 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
-#include "pipex.h"
+#ifdef BONUS
+# include "pipex_bonus.h"
+#else
+# include "pipex.h"
+#endif
 
 static void	ft_close_pipes_last(t_pipex *pipex, int prev_pipe[])
 {
@@ -43,9 +46,12 @@ static void	ft_last_child2(t_pipex *pipex, int prev_pipe[])
 void	ft_last_child(t_pipex *pipex, int prev_pipe[])
 {
 	int		outfile;
-	
-	outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644); // if statement heredoc, concatenate
+
 	ft_close_pipes_last(pipex, prev_pipe);
+	if (ft_strcmp(pipex->infile, "heredoc") == 0)
+		outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile == -1)
 	{
 		perror("Error opening outfile");

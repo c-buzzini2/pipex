@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/23 14:22:21 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/18 17:25:19 by cbuzzini         ###   ########.fr       */
+/*   Created: 2025/03/18 17:29:50 by cbuzzini          #+#    #+#             */
+/*   Updated: 2025/03/18 17:42:02 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,16 @@
 # include "pipex.h"
 #endif
 
-static void	ft_putchar_fd(char c, int fd)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	if (!fd)
-		return ;
-	if (write(fd, &c, 1) == -1)
-		exit(errno);
-}
+	size_t			i;
+	unsigned char	*str1;
+	unsigned char	*str2;
 
-void	ft_putstr_fd(char *s, int fd)
-{
-	int	n;
-
-	n = 0;
-	if (!s || !fd)
-		return ;
-	while (s[n] > 0)
-	{
-		ft_putchar_fd(s[n], fd);
-		n++;
-	}
+	str1 = (unsigned char *)s1;
+	str2 = (unsigned char *)s2;
+	i = 0;
+	while (str1[i] == str2[i] && str1[i] && str2[i])
+		i++;
+	return (str1[i] - str2[i]);
 }

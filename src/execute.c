@@ -6,12 +6,15 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 15:19:24 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/15 10:49:32 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:24:37 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
-#include "pipex.h"
+#ifdef BONUS
+# include "pipex_bonus.h"
+#else
+# include "pipex.h"
+#endif
 
 void	ft_execute(char *cmd, char *envp[])
 {

@@ -6,25 +6,38 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:27 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/14 14:55:46 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:41:11 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
-#include "pipex.h"
+#ifdef BONUS
+# include "pipex_bonus.h"
+#else
+# include "pipex.h"
+#endif
 
-static void ft_close_pipes_first(t_pipex *pipex)
+void	ft_delete_heredoc(t_pipex *pipex)
 {
-    int     i;
+	if (unlink(pipex->infile) != 0)
+	{
+		perror("Could not delete heredoc file");
+		ft_deallocate_pipes(pipex->fd);
+		exit(errno);
+	}
+}
 
-    i = 0;
-    while (i < (pipex->cmd_count - 1))
-    {
-        close(pipex->fd[i][0]);
-        if (i != 0)
-            close(pipex->fd[i][1]);
-        i++;
-    }
+static void	ft_close_pipes_first(t_pipex *pipex)
+{
+	int	i;
+
+	i = 0;
+	while (i < (pipex->cmd_count - 1))
+	{
+		close(pipex->fd[i][0]);
+		if (i != 0)
+			close(pipex->fd[i][1]);
+		i++;
+	}
 }
 
 void	ft_first_child2(t_pipex *pipex)
@@ -59,5 +72,7 @@ void	ft_first_child(t_pipex *pipex)
 		exit(errno);
 	}
 	close(infile);
+	if (ft_strcmp(pipex->infile, "heredoc") == 0)
+		ft_delete_heredoc(pipex);
 	ft_first_child2(pipex);
 }

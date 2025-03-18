@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/15 12:58:37 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:10:22 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,20 @@ int	main(int argc, char *argv[], char *envp[])
 
 	if (argc < 5)
 	{
-		ft_putstr_fd("Not enough arguments.", 1);
+		ft_putstr_fd("Not enough arguments\n", 1);
 		exit(1);
 	}
-	pipex.argc = argc;
-	pipex.cmd_count = argc - 3; // needs if statement for heredoc (-4)
-	pipex.cmds = argv + 2; //also inside if statement heredoc (+3)
+	if (ft_strcmp(argv[1], "here_doc") == 0)
+	{
+		ft_heredoc(&pipex, argc, argv);
+	}
+	else
+	{
+		pipex.cmd_count = argc - 3;
+		pipex.cmds = argv + 2;
+		pipex.infile = argv[1];
+	}
 	pipex.envp = envp;
-	pipex.infile = argv[1];//not in heredoc. create a file and put in the same pointer
 	pipex.outfile = argv[argc - 1];
 	ft_create_arr_pipes(&pipex);
 	estatus = ft_fork(&pipex);

@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 10:46:33 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/15 10:40:36 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:03:03 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,9 @@ int	main(int argc, char *argv[], char *envp[])
 
 	if (argc != 5)
 	{
-		ft_putstr_fd("Number of arguments must be 5.", 1);
+		ft_putstr_fd("Number of arguments must be 5\n", 1);
 		exit(1);
 	}
-	//check empty strings
-	//check with heredoc
 	pipex.argc = argc;
 	pipex.cmd_count = argc - 3;
 	pipex.cmds = argv + 2;

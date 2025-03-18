@@ -6,7 +6,7 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:33:53 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/15 12:43:59 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 13:55:44 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_next_line(int fd)
 	{
 		if (buffer[0])
 		{
-			joined = ft_strjoin(joined, buffer);
+			joined = ft_strjoin_gnl(joined, buffer);
 			if (joined == NULL)
 				return (NULL);
 			ft_strlcpy(buffer, buffer + ft_len_till_eol(buffer, '\n'), \

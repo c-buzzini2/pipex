@@ -6,12 +6,15 @@
 /*   By: cbuzzini <cbuzzini@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:44:18 by cbuzzini          #+#    #+#             */
-/*   Updated: 2025/03/14 13:31:47 by cbuzzini         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:25:56 by cbuzzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
-#include "pipex.h"
+#ifdef BONUS
+# include "pipex_bonus.h"
+#else
+# include "pipex.h"
+#endif
 
 void	ft_deallocate_pipes(int **pipefd)
 {
